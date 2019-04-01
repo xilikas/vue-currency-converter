@@ -2,9 +2,13 @@
   div#app
     h1 Currency Converter
     input(type="text" id="initial" placeholder="0" v-model="initialCurrency")
-    label(for="initial") CAD = 
-    input(type="text" id="convert" placeholder="0" v-model="convertCurrency")
-    label(for="convert") USD
+    select(v-model="initialCountry")
+      option(v-for="country in countries" v-model="initialCountry") {{country.currencyId}}
+    p =
+    input(type="text" id="convert" readonly placeholder="0" v-model="convertCurrency")
+    select(v-model="convertCountry")
+      option(v-for="country in countries") {{country.currencyId}}
+    label(for="convert")
 
 </template>
 
@@ -19,6 +23,8 @@ const API_KEY = process.env.VUE_APP_API_KEY;
     return {
       initialCurrency: null,
       convertCurrency: null,
+      initialCountry: 'CAD',
+      convertCountry: 'USD',
       countries: [],
       rate: null,
     };
@@ -38,18 +44,26 @@ const API_KEY = process.env.VUE_APP_API_KEY;
     }
   },
   watch: {
-    async initialCurrency() {
+    initialCurrency: async function () {
       let { convertCurrency, rate } = this.$data;
+      const { initialCountry, convertCountry } = this.$data;
+      const conversionString = `${initialCountry}_${convertCountry}`
       if (rate === null) {
-        const res = await fetch(`${BASE_URL}/convert?apiKey=${API_KEY}&q=CAD_USD&compact=ultra`);
+        const res = await fetch(`${BASE_URL}/convert?apiKey=${API_KEY}&q=${conversionString}&compact=ultra`);
         rate = await res.json();
         this.$data.rate = rate;
+        this.getConversionString();
       }
       const initialCurrency = Number.parseInt(this.$data.initialCurrency);
       this.$data.convertCurrency = +(this.$data.initialCurrency * rate[Object.keys(rate)[0]]).toFixed(2);
       return this.$data.convertCurrency;
     },
   },
+  methods: {
+    getConversionString: function () {
+
+    }
+  }
 })
 export default class App extends Vue {
 }
