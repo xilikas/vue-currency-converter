@@ -13,22 +13,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 
-const BASE_URL = 'https://free.currencyconverterapi.com/api/v6';
+const BASE_URL = "https://free.currencyconverterapi.com/api/v6";
 const API_KEY = process.env.VUE_APP_API_KEY;
 
-@Component({
-  data() {
-    return {
-      initialCurrency: null,
-      convertCurrency: null,
-      initialCountry: 'CAD',
-      convertCountry: 'USD',
-      countries: [],
-      rate: null,
-    };
-  },
+@Component
+export default class App extends Vue {
+  initialCurrency = null;
+  convertCurrency = 0;
+  initialCountry = "CAD";
+  convertCountry = "USD";
+  countries = [];
+  rate = 0;
+
   async mounted() {
     if (localStorage.countries) {
       this.$data.countries = JSON.parse(localStorage.countries);
@@ -42,30 +40,31 @@ const API_KEY = process.env.VUE_APP_API_KEY;
         console.log(e);
       }
     }
-  },
-  watch: {
-    initialCurrency: async function () {
-      let { convertCurrency, rate } = this.$data;
-      const { initialCountry, convertCountry } = this.$data;
-      const conversionString = `${initialCountry}_${convertCountry}`
-      if (rate === null) {
-        const res = await fetch(`${BASE_URL}/convert?apiKey=${API_KEY}&q=${conversionString}&compact=ultra`);
-        rate = await res.json();
-        this.$data.rate = rate;
-        this.getConversionString();
-      }
-      const initialCurrency = Number.parseInt(this.$data.initialCurrency);
-      this.$data.convertCurrency = +(this.$data.initialCurrency * rate[Object.keys(rate)[0]]).toFixed(2);
-      return this.$data.convertCurrency;
-    },
-  },
-  methods: {
-    getConversionString: function () {
-
-    }
   }
-})
-export default class App extends Vue {
+
+  @Watch('initialCurrency')
+  async onChildChange() {
+    let { convertCurrency, rate } = this.$data;
+    const { initialCountry, convertCountry } = this.$data;
+    const conversionString = `${initialCountry}_${convertCountry}`;
+    if (rate === 0) {
+      const res = await fetch(
+        `${BASE_URL}/convert?apiKey=${API_KEY}&q=${conversionString}&compact=ultra`
+      );
+      rate = await res.json();
+      this.$data.rate = rate;
+      this.getConversionString();
+    }
+    const initialCurrency = Number.parseInt(this.$data.initialCurrency);
+    this.$data.convertCurrency = +(
+      this.$data.initialCurrency * rate[Object.keys(rate)[0]]
+    ).toFixed(2);
+    return this.$data.convertCurrency;
+  }
+
+  getConversionString() {
+
+  }
 }
 </script>
 
