@@ -42,8 +42,18 @@ export default class App extends Vue {
     }
   }
 
-  @Watch('initialCurrency')
+  @Watch('initialCurrency', { immediate: true, deep: true })
   async onChildChange() {
+    this.calculateCurrency();
+  }
+
+  @Watch('initialCountry', { immediate: true, deep: true })
+  async onChildChange1() {
+    this.calculateCurrency();
+  }
+
+  @Watch('convertCountry', { immediate: true, deep: true })
+  async onChildChange2() {
     this.calculateCurrency();
   }
 
