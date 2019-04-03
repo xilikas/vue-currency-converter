@@ -44,26 +44,29 @@ export default class App extends Vue {
 
   @Watch('initialCurrency')
   async onChildChange() {
-    let { convertCurrency, rate } = this.$data;
-    const { initialCountry, convertCountry } = this.$data;
-    const conversionString = `${initialCountry}_${convertCountry}`;
-    if (rate === 0) {
-      const res = await fetch(
-        `${BASE_URL}/convert?apiKey=${API_KEY}&q=${conversionString}&compact=ultra`
-      );
-      rate = await res.json();
-      this.$data.rate = rate;
-      this.getConversionString();
-    }
-    const initialCurrency = Number.parseInt(this.$data.initialCurrency);
-    this.$data.convertCurrency = +(
-      this.$data.initialCurrency * rate[Object.keys(rate)[0]]
-    ).toFixed(2);
-    return this.$data.convertCurrency;
+    this.calculateCurrency();
   }
 
-  getConversionString() {
+  async getRate() {
+    const { initialCountry, convertCountry } = this.$data;
+    const convertStr = `${initialCountry}_${convertCountry}`;
+    try {
+      const res = await fetch(
+        `${BASE_URL}/convert?apiKey=${API_KEY}&q=${convertStr}&compact=ultra`
+      );
+      let rate = await res.json();
+      rate = rate[Object.keys(rate)[0]];
+      this.$data.rate = rate;
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
+  calculateCurrency() {
+    let { convertCurrency, rate } = this.$data;
+    this.getRate();
+    const initialCurrency = Number.parseInt(this.$data.initialCurrency);
+    this.$data.convertCurrency = +(this.$data.initialCurrency * rate).toFixed(2);
   }
 }
 </script>
