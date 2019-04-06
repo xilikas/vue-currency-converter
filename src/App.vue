@@ -14,6 +14,9 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
+import VueCookies from 'vue-cookies';
+
+Vue.use(VueCookies);
 
 const BASE_URL = "https://free.currencyconverterapi.com/api/v6";
 const API_KEY = process.env.VUE_APP_API_KEY;
@@ -21,11 +24,11 @@ const API_KEY = process.env.VUE_APP_API_KEY;
 @Component
 export default class App extends Vue {
   initialCurrency = null;
-  convertCurrency = 0;
-  initialCountry = "CAD";
-  convertCountry = "USD";
-  countries = [];
-  rate = 0;
+  convertCurrency: number = 0;
+  initialCountry: string = "CAD";
+  convertCountry: string = "USD";
+  countries: any = [];
+  rate: number = 0;
 
   async mounted() {
     if (localStorage.countries) {
@@ -59,16 +62,22 @@ export default class App extends Vue {
 
   async getRate() {
     const { initialCountry, convertCountry } = this.$data;
-    const convertStr = `${initialCountry}_${convertCountry}`;
-    try {
-      const res = await fetch(
-        `${BASE_URL}/convert?apiKey=${API_KEY}&q=${convertStr}&compact=ultra`
-      );
-      let rate = await res.json();
-      rate = rate[Object.keys(rate)[0]];
-      this.$data.rate = rate;
-    } catch (e) {
-      console.log(e);
+    const convert: string = `${initialCountry}_${convertCountry}`;
+
+    if (this.$cookies.isKey(convert)) { // Cookie exists with exchange rate, set to state 
+      this.$data.rate = this.$cookies.get(convert);
+    } else { // Fetch rate, set to cookie, set to state 
+      try {
+        const res = await fetch(
+          `${BASE_URL}/convert?apiKey=${API_KEY}&q=${convert}&compact=ultra`
+        );
+        let rate = await res.json();
+        rate = rate[Object.keys(rate)[0]];
+        this.$cookies.set(convert, rate);
+        this.$data.rate = rate;
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 
