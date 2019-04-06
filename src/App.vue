@@ -9,6 +9,7 @@
     select(v-model="convertCountry")
       option(v-for="country in countries") {{country.currencyId}}
     label(for="convert")
+    button(type="button" @click="swap") Swap Currencies
 
 </template>
 
@@ -92,6 +93,13 @@ export default class App extends Vue {
     this.getRate();
     const initialCurrency = Number.parseInt(this.$data.initialCurrency, 10);
     this.$data.convertCurrency = +(this.$data.initialCurrency * rate).toFixed(2);
+  }
+
+  private swap() {
+    console.log('Swap Currencies');
+    const temp: string = this.$data.initialCountry;
+    this.$data.initialCountry = this.$data.convertCountry;
+    this.$data.convertCountry = temp;
   }
 }
 </script>
