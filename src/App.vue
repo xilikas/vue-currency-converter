@@ -73,7 +73,9 @@ export default class App extends Vue {
         );
         let rate = await res.json();
         rate = rate[Object.keys(rate)[0]];
-        this.$cookies.set(convert, rate);
+        const today = new Date();
+        const expire = new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours() + 1, 0, 0) // Add one to current hour to always expire on the next hour (when currency converter updates rates)
+        this.$cookies.set(convert, rate, expire);
         this.$data.rate = rate;
       } catch (e) {
         console.log(e);
