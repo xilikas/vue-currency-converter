@@ -18,19 +18,19 @@ import VueCookies from 'vue-cookies';
 
 Vue.use(VueCookies);
 
-const BASE_URL = "https://free.currencyconverterapi.com/api/v6";
+const BASE_URL = 'https://free.currencyconverterapi.com/api/v6';
 const API_KEY = process.env.VUE_APP_API_KEY;
 
 @Component
 export default class App extends Vue {
-  initialCurrency = null;
-  convertCurrency: number = 0;
-  initialCountry: string = "CAD";
-  convertCountry: string = "USD";
-  countries: any = [];
-  rate: number = 0;
+  private initialCurrency = null;
+  private convertCurrency: number = 0;
+  private initialCountry: string = 'CAD';
+  private convertCountry: string = 'USD';
+  private countries: any = [];
+  private rate: number = 0;
 
-  async mounted() {
+  private async mounted() {
     if (localStorage.countries) {
       this.$data.countries = JSON.parse(localStorage.countries);
     } else if (!localStorage.countries) {
@@ -46,30 +46,30 @@ export default class App extends Vue {
   }
 
   @Watch('initialCurrency', { immediate: true, deep: true })
-  async onChildChange() {
+  private async onChildChange() {
     this.calculateCurrency();
   }
 
   @Watch('initialCountry', { immediate: true, deep: true })
-  async onChildChange1() {
+  private async onChildChange1() {
     this.calculateCurrency();
   }
 
   @Watch('convertCountry', { immediate: true, deep: true })
-  async onChildChange2() {
+  private async onChildChange2() {
     this.calculateCurrency();
   }
 
-  async getRate() {
+  private async getRate() {
     const { initialCountry, convertCountry } = this.$data;
     const convert: string = `${initialCountry}_${convertCountry}`;
 
-    if (this.$cookies.isKey(convert)) { // Cookie exists with exchange rate, set to state 
+    if (this.$cookies.isKey(convert)) { // Cookie exists with exchange rate, set to state
       this.$data.rate = this.$cookies.get(convert);
-    } else { // Fetch rate, set to cookie, set to state 
+    } else { // Fetch rate, set to cookie, set to state
       try {
         const res = await fetch(
-          `${BASE_URL}/convert?apiKey=${API_KEY}&q=${convert}&compact=ultra`
+          `${BASE_URL}/convert?apiKey=${API_KEY}&q=${convert}&compact=ultra`,
         );
         let rate = await res.json();
         rate = rate[Object.keys(rate)[0]];
@@ -81,10 +81,10 @@ export default class App extends Vue {
     }
   }
 
-  calculateCurrency() {
-    let { convertCurrency, rate } = this.$data;
+  private calculateCurrency() {
+    const { rate } = this.$data;
     this.getRate();
-    const initialCurrency = Number.parseInt(this.$data.initialCurrency);
+    const initialCurrency = Number.parseInt(this.$data.initialCurrency, 10);
     this.$data.convertCurrency = +(this.$data.initialCurrency * rate).toFixed(2);
   }
 }
