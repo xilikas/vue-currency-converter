@@ -1,23 +1,32 @@
 <template lang="pug">
   div#app
     h1 Currency Converter
-    input(type="text" id="initial" placeholder="0" v-model="initialCurrency")
-    select(v-model="initialCountry")
-      option(v-for="country in countries" v-model="initialCountry") {{country.currencyId}}
-    p =
-    input(type="text" id="convert" readonly placeholder="0" v-model="convertCurrency")
-    select(v-model="convertCountry")
-      option(v-for="country in countries") {{country.currencyId}}
-    label(for="convert")
-    button(type="button" @click="swap") Swap Currencies
+    div(app-data)
+      v-text-field(v-model="initialCurrency" label="Initial Currency") 
+      // input(type="text" id="initial" placeholder="0" v-model="initialCurrency")
+      v-autocomplete(
+        v-model="initialCountry"
+        :items="countries"
+        item-value="currencyId"
+        item-text="currencyId"
+      )
+      // select(v-model="initialCountry")
+      //   option(v-for="country in countries" v-model="initialCountry") {{country.currencyId}}
+      p =
+      v-text-field(v-model="convertCurrency" readonly label="Converted Currency") 
+      // input(type="text" id="convert" readonly placeholder="0" v-model="convertCurrency")
+      v-autocomplete(
+        v-model="convertCountry"
+        :items="countries"
+        item-value="currencyId"
+        item-text="currencyId"
+      )
+      v-btn(@click="swap") Swap Currencies
 
 </template>
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import VueCookies from 'vue-cookies';
-
-Vue.use(VueCookies);
 
 const BASE_URL = 'https://free.currencyconverterapi.com/api/v6';
 const API_KEY = process.env.VUE_APP_API_KEY;
