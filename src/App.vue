@@ -1,27 +1,29 @@
 <template lang="pug">
   div#app
     h1 Currency Converter
-    div(app-data)
-      v-text-field(v-model="initialCurrency" label="Initial Currency") 
-      // input(type="text" id="initial" placeholder="0" v-model="initialCurrency")
-      v-autocomplete(
-        v-model="initialCountry"
-        :items="countries"
-        item-value="currencyId"
-        item-text="currencyId"
-      )
-      // select(v-model="initialCountry")
-      //   option(v-for="country in countries" v-model="initialCountry") {{country.currencyId}}
+    v-container
+      v-layout(row wrap)
+        v-flex(md8)
+          v-text-field(v-model="initialCurrency" label="Initial Currency") 
+        v-flex(md4)
+          v-autocomplete(
+            v-model="initialCountry"
+            :items="countries"
+            item-value="currencyId"
+            item-text="currencyId"
+          )
       p =
-      v-text-field(v-model="convertCurrency" readonly label="Converted Currency") 
-      // input(type="text" id="convert" readonly placeholder="0" v-model="convertCurrency")
-      v-autocomplete(
-        v-model="convertCountry"
-        :items="countries"
-        item-value="currencyId"
-        item-text="currencyId"
-      )
-      v-btn(@click="swap") Swap Currencies
+      v-layout(row wrap)
+        v-flex(md8)
+          v-text-field(v-model="convertCurrency" readonly label="Converted Currency") 
+        v-flex(md4)
+          v-autocomplete(
+            v-model="convertCountry"
+            :items="countries"
+            item-value="currencyId"
+            item-text="currencyId"
+          )
+      v-btn(@click="swap" block dark large) Swap Currencies
 
 </template>
 
