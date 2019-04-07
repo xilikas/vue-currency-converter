@@ -4,7 +4,7 @@
     v-container
       v-layout(row wrap)
         v-flex(md8)
-          v-text-field(v-model="initialCurrency" label="Initial Currency") 
+          v-text-field(v-model="initialCurrency" class="dollarInput" label="Initial Currency") 
         v-flex(md4)
           v-autocomplete(
             v-model="initialCountry"
@@ -15,7 +15,7 @@
       p =
       v-layout(row wrap)
         v-flex(md8)
-          v-text-field(v-model="convertCurrency" readonly label="Converted Currency") 
+          v-text-field(v-model="convertCurrency" class="dollarInput" readonly label="Converted Currency") 
         v-flex(md4)
           v-autocomplete(
             v-model="convertCountry"
@@ -115,7 +115,6 @@ export default class App extends Vue {
 }
 </script>
 
-
 <style lang="scss">
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
@@ -132,6 +131,14 @@ export default class App extends Vue {
     &.router-link-exact-active {
       color: #42b983;
     }
+  }
+}
+
+.dollarInput {
+  padding-right: 10px;
+
+  @media only screen and (max-width: 460px) {
+    padding-right: 0px;
   }
 }
 </style>
