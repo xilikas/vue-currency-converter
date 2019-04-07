@@ -1,5 +1,5 @@
 <template lang="pug">
-  div#app
+  v-app
     h1 Currency Converter
     v-container
       v-layout(row wrap)
